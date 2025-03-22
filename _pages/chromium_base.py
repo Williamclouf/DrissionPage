@@ -79,10 +79,20 @@ class ChromiumBase(BasePage):
 
         if not target_id:
             tabs = self.browser._driver.get(f'http://{self.browser.address}/json').json()
-            tabs = [(i['id'], i['url']) for i in tabs
-                    if i['type'] in ('page', 'webview') and not i['url'].startswith('devtools://')]
-            dialog = None
-            if len(tabs) > 1:
+            
+            if len(tabs) == 0:
+                tab = self._browser.new_tab()
+                target_id = tab.tab_id
+                print(tab.tab_id)
+            
+            elif len(tabs) == 1:
+                target_id = tabs[0]['id']
+
+            elif len(tabs) > 1:
+                dialog = None
+                tabs = [(i['id'], i['url']) for i in tabs
+                        if i['type'] in ('page', 'webview') and not i['url'].startswith('devtools://')]
+
                 for k, t in enumerate(tabs):
                     if t[1] == 'chrome://privacy-sandbox-dialog/notice':
                         dialog = k
@@ -94,9 +104,6 @@ class ChromiumBase(BasePage):
 
                 if dialog is not None:
                     close_privacy_dialog(self, tabs[dialog][0])
-
-            else:
-                target_id = tabs[0][0]
 
         self._driver_init(target_id)
         if self._js_ready_state == 'complete' and self._ready_state is None:

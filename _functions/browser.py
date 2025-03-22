@@ -171,12 +171,11 @@ def test_connect(ip, port):
     s.keep_alive = False
     while perf_counter() < end_time:
         try:
-            r = s.get(f'http://{ip}:{port}/json', timeout=10, headers={'Connection': 'close'})
-            for tab in r.json():
-                if tab['type'] in ('page', 'webview'):
-                    r.close()
-                    s.close()
-                    return True
+            r = s.get(f'http://{ip}:{port}/json/version', timeout=10, headers={'Connection': 'close'})
+            if 'webSocketDebuggerUrl' in r.json().keys():
+                r.close()
+                s.close()
+                return True
             r.close()
         except Exception:
             sleep(.2)
