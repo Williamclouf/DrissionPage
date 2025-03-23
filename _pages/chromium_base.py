@@ -83,7 +83,6 @@ class ChromiumBase(BasePage):
             if len(tabs) == 0:
                 tab = self._browser.new_tab()
                 target_id = tab.tab_id
-                print(tab.tab_id)
             
             elif len(tabs) == 1:
                 target_id = tabs[0]['id']

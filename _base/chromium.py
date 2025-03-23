@@ -87,7 +87,8 @@ class Chromium(object):
             s = Session()
             s.trust_env = False
             s.keep_alive = False
-            ws = s.get(f'http://{self._chromium_options.address}/json/version', headers={'Connection': 'close'})
+            # DevTools 952522: Host header must being IP or localhost when connecting over RDP
+            ws = s.get(f'http://{self._chromium_options.address}/json/version', headers={'Connection': 'close', 'Host': 'localhost'})
             self.id = ws.json()['webSocketDebuggerUrl'].split('/')[-1]
             self._driver = BrowserDriver(self.id, 'browser', self.address, self)
             ws.close()
@@ -472,7 +473,8 @@ def run_browser(chromium_options):
         s = Session()
         s.trust_env = False
         s.keep_alive = False
-        ws = s.get(f'http://{chromium_options.address}/json/version', headers={'Connection': 'close'})
+        # DevTools 952522: Host header must being IP or localhost when connecting over RDP
+        ws = s.get(f'http://{chromium_options.address}/json/version', headers={'Connection': 'close', 'Host': 'localhost'})
         if not ws:
             raise BrowserConnectError(_S._lang.BROWSER_CONNECT_ERR2)
         json = ws.json()

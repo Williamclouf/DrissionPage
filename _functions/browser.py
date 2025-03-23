@@ -171,7 +171,8 @@ def test_connect(ip, port):
     s.keep_alive = False
     while perf_counter() < end_time:
         try:
-            r = s.get(f'http://{ip}:{port}/json/version', timeout=10, headers={'Connection': 'close'})
+            # DevTools 952522: Host header must being IP or localhost when connecting over RDP
+            r = s.get(f'http://{ip}:{port}/json/version', timeout=10, headers={'Connection': 'close', 'Host': 'localhost'})
             if 'webSocketDebuggerUrl' in r.json().keys():
                 r.close()
                 s.close()

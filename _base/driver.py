@@ -224,7 +224,8 @@ class BrowserDriver(Driver):
         s = Session()
         s.trust_env = False
         s.keep_alive = False
-        r = s.get(url, headers={'Connection': 'close'})
+        # DevTools 952522: Host header must being IP or localhost when connecting over RDP
+        r = s.get(url, headers={'Connection': 'close', 'Host': 'localhost'})
         r.close()
         s.close()
         return r
